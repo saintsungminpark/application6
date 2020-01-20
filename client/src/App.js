@@ -18,35 +18,26 @@ const styles = theme => ({
   table: {
     minWidth: 1080
   }
-})
-
-const customers = [{
-  'id': 1,
-  'image': 'https://placeimg.com/64/64/1',
-  'name': 'Park',
-  'birthday': '961222',
-  'gender': '남자',
-  'job': 'teacher'
-},
-{
-  'id': 2,
-  'image': 'https://placeimg.com/64/64/2',
-  'name': 'James',
-  'birthday': '201222',
-  'gender': '남자',
-  'job': 'college student'
-},
-{
-  'id': 3,
-  'image': 'https://placeimg.com/64/64/3',
-  'name': 'Cathey',
-  'birthday': '651222',
-  'gender': '여자',
-  'job': 'doctor'
-},
-]
+});
 
 class App extends Component {
+
+  state = {
+    customers: ""
+  }
+
+  componentDidMount() {
+    this.callApi()
+      .then(res => this.setState({ customers: res }))
+      .catch(err => console.log(err)); // error 발생시 출력
+  }
+
+  callApi = async () => {
+    const response = await fetch('/api/customers');
+    const body = await response.json();
+    return body;
+  }
+
   render() {
     const { classes } = this.props;
     return (
@@ -63,7 +54,9 @@ class App extends Component {
             </TableRow>
           </TableHead>
           <TableBody>
-            {customers.map(c => { return (<Customer key={c.id} id={c.id} image={c.image} name={c.name} birthday={c.birthday} gender={c.gender} job={c.job} />); })}
+            {this.state.customers ? this.state.customers.map(c => {
+              return (<Customer key={c.id} id={c.id} image={c.image} name={c.name} birthday={c.birthday} gender={c.gender} job={c.job} />);
+            }) : ""}
           </TableBody>
         </Table>
       </Paper>
